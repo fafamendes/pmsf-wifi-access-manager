@@ -4,7 +4,6 @@ import { Request, Response } from 'express';
 import { UserRepository } from '@repositories/user.repository'
 
 import { BaseController } from '.';
-import { CustomPrismaError } from '@src/types/types';
 import { AuthService } from '@src/services/auth';
 import { authMiddleware } from '@src/middlewares/auth';
 
@@ -18,7 +17,7 @@ export class UsersController extends BaseController {
 
 
       res.send({ success: true, user });
-    } catch (error: CustomPrismaError | any) {
+    } catch (error: Error | any) {
       console.log(error)
     }
     res.status(401);
@@ -38,7 +37,7 @@ export class UsersController extends BaseController {
           res.status(401).send({ message: 'Invalid password' })
         }
       }
-    } catch (error: CustomPrismaError | any) {
+    } catch (error: Error | any) {
       console.log(error)
     }
   }
@@ -97,7 +96,7 @@ export class UsersController extends BaseController {
           res.status(401).send(false)
         }
       }
-    } catch (error: CustomPrismaError | any) {
+    } catch (error: Error | any) {
       console.log(error)
     }
   }

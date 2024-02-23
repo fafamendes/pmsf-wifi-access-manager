@@ -15,7 +15,7 @@ module.exports = {
       level: "info"
     },
     auth: {
-      key: "rola_fritona_no_azeite_de_dendê_disgraça",
+      key: "O amanhecer do dia",
       tokenExpiresIn: '7 days'
     }
   }

@@ -40,7 +40,7 @@ userSchema.path('username').validate(
     const user = await User.findOne({ username: username });
     return !user;
   },
-  'Email already exists',
+  'Username already exists',
   CUSTOM_VALIDATION.DUPLICATED
 );
 

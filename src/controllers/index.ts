@@ -1,8 +1,7 @@
 import { Response } from 'express';
-import { CustomPrismaError } from '@src/types/types';
 
 export abstract class BaseController {
-  protected sendErrorResponse(res: Response, error: CustomPrismaError): Response {
+  protected sendErrorResponse(res: Response, error: Error | any): Response {
     return res.status(400).send({ success: false, message: error.message });
     //to-do: add better error handling
   }
