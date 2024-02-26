@@ -3,7 +3,7 @@ version: '3'
 services:
   app:
     build: .
-    container_name: pmsf-wan-app
+    container_name: pmsf-wam-app
     ports:
       - 3000:3000
     networks:
