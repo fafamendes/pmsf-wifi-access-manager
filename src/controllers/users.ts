@@ -83,7 +83,7 @@ export class UsersController extends BaseController {
     res.status(401).send({ message: 'Unauthorized' });
   }
 
-  @Post(':verify')
+  @Post('/verify')
   public async verifyUser(req: Request, res: Response): Promise<void> {
     try {
       const user = await UserRepository.getUserByUsername(req.body.username)
@@ -91,7 +91,10 @@ export class UsersController extends BaseController {
         res.status(404).send(false)
       } else {
         if (await AuthService.comparePassword(req.body.password, user.password)) {
-          res.send(true);
+          if(user.status)
+            res.send(true);
+          else
+            res.status(401).send(false)
         } else {
           res.status(401).send(false)
         }
