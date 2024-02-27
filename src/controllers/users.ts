@@ -11,10 +11,15 @@ import { authMiddleware } from '@src/middlewares/auth';
 export class UsersController extends BaseController {
 
   @Post('')
+  @Middleware(authMiddleware)
   public async createUser(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+    if (loggedUser?.role !== 'ADMIN') {
+      res.status(401).send({ message: 'Unauthorized' });
+    }
     try {
       const user = await UserRepository.createUser(req.body)
-
 
       res.send({ success: true, user });
     } catch (error: Error | any) {
@@ -83,7 +88,7 @@ export class UsersController extends BaseController {
     res.status(401).send({ message: 'Unauthorized' });
   }
 
-  @Post('/verify')
+  @Post('verify')
   public async verifyUser(req: Request, res: Response): Promise<void> {
     try {
       const user = await UserRepository.getUserByUsername(req.body.username)

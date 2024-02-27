@@ -9,6 +9,7 @@ import { UsersController } from './controllers/users';
 
 import logger from './logger';
 import * as database from '@src/database';
+import { createDefaultUser } from './services/default-user';
 
 export class SetupServer extends Server {
   private server?: http.Server;
@@ -20,6 +21,7 @@ export class SetupServer extends Server {
     this.setupExpress();
     this.setupControllers();
     await this.setupDatabase();
+    createDefaultUser();
   }
 
   public getApp(): Application {
