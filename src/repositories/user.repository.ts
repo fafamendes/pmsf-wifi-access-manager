@@ -1,4 +1,5 @@
 
+import mongoose from 'mongoose'
 import { User } from '../models/users'
 
 export class UserRepository {
@@ -9,9 +10,9 @@ export class UserRepository {
   static async getAllUsers(): Promise<User[]> {
     return await User.find()
   }
-  
+
   static async getById(id: string): Promise<User | null> {
-    return await User.findById(id)
+    return await User.findById(new mongoose.Types.ObjectId(id));
   }
 
   static async getUserByUsername(username: string): Promise<User | null> {

@@ -16,12 +16,21 @@ export class UsersController extends BaseController {
     const userId = req.context?.userId;
     const loggedUser = await UserRepository.getById(userId!);
     if (loggedUser?.role !== 'ADMIN') {
+      console.log('Não é admin')
       res.status(401).send({ message: 'Unauthorized' });
+
     }
+
+    const user = await UserRepository.getUserByUsername(req.body.username);
+    if (user) {
+      res.status(200).send({ message: 'User already exists' })
+      res.end();
+    };
+
     try {
       const user = await UserRepository.createUser(req.body)
 
-      res.send({ success: true, user });
+      res.send({ success: true, user }).end();
     } catch (error: Error | any) {
       console.log(error)
     }
@@ -36,7 +45,7 @@ export class UsersController extends BaseController {
         res.status(401).send({ message: 'User not found' })
       } else {
         if (await AuthService.comparePassword(req.body.password, user.password)) {
-          const token = AuthService.generateToken(user.username);
+          const token = AuthService.generateToken(user.id!);
           res.send({ token, user });
         } else {
           res.status(401).send({ message: 'Invalid password' })
@@ -63,7 +72,7 @@ export class UsersController extends BaseController {
     if (!user) {
       res.status(404).send({ message: 'User not found' });
     }
-    if (user?.role === 'ADMIN' || userId === user?._id) {
+    if (user?.role === 'ADMIN' || userId === user?.id) {
       await UserRepository.deleteUser(req.params.id);
       res.send({ success: true });
     }
@@ -81,7 +90,7 @@ export class UsersController extends BaseController {
       res.status(404).send({ message: 'User not found' });
     }
 
-    if (user?.role === 'ADMIN' || userId === user?._id) {
+    if (user?.role === 'ADMIN' || userId === user?.id) {
       await UserRepository.updateUser(req.params.id, req.body);
       res.send({ success: true });
     }
@@ -96,7 +105,7 @@ export class UsersController extends BaseController {
         res.status(404).send(false)
       } else {
         if (await AuthService.comparePassword(req.body.password, user.password)) {
-          if(user.status)
+          if (user.status)
             res.send(true);
           else
             res.status(401).send(false)

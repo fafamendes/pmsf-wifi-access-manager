@@ -2,7 +2,7 @@ import mongoose, { Document, Model } from "mongoose";
 import { AuthService } from "@src/services/auth";
 
 export interface User {
-  _id?: string,
+  id?: string,
   name: string,
   username: string,
   role: 'ADMIN' | 'USER',
@@ -14,7 +14,7 @@ export enum CUSTOM_VALIDATION {
   DUPLICATED = 'DUPLICATED',
 }
 
-export interface UserModel extends Omit<User, '_id'>, Document { }
+export interface UserModel extends Omit<User, 'id'>, Document { }
 
 const userSchema = new mongoose.Schema(
   {
