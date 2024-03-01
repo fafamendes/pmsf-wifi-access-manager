@@ -63,6 +63,27 @@ export class UsersController extends BaseController {
 
   }
 
+  @Post('users_count')
+  @Middleware(authMiddleware)
+  public async getNumberOfUsers(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    console.log(userId)
+    const loggedUser = await UserRepository.getById(userId!);
+    try {
+      if (!userId) {
+        res.status(401).send({ message: 'Token is not provided' });
+      }
+      if (loggedUser?.role !== 'ADMIN') {
+        res.status(401).send({ message: 'Unauthorized' });
+      } else {
+        const usersCount = await UserRepository.getUsersCount();
+        res.status(200).send({ usersCount });
+      }
+    } catch (error: Error | any) {
+      console.log(error)
+    }
+  }
+
   @Delete(':id')
   @Middleware(authMiddleware)
   public async deleteUser(req: Request, res: Response): Promise<void> {

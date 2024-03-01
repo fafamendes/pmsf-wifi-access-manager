@@ -7,8 +7,8 @@ export class UserRepository {
     return await User.create(data)
   }
 
-  static async getAllUsers(): Promise<User[]> {
-    return await User.find()
+  static async getUsersCount(): Promise<number> {
+    return await User.countDocuments({});
   }
 
   static async getById(id: string): Promise<User | null> {
