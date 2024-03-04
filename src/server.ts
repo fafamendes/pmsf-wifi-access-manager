@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import * as http from 'http';
 
 import { UsersController } from './controllers/users';
+import { UploadXlsxController } from './controllers/uploadXlsx';
 
 import logger from './logger';
 import * as database from '@src/database';
@@ -44,7 +45,10 @@ export class SetupServer extends Server {
 
   private setupControllers(): void {
     this.addControllers(
-      [new UsersController(),]
+      [
+        new UsersController(),
+        new UploadXlsxController(),
+      ]
     );
   }
   public start(): void {

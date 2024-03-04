@@ -125,6 +125,7 @@ export class UsersController extends BaseController {
       if (!user) {
         res.status(404).send(false)
       } else {
+        console.log(req.body.password, user.password)
         if (await AuthService.comparePassword(req.body.password, user.password)) {
           if (user.status)
             res.send(true);

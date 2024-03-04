@@ -7,6 +7,10 @@ export class UserRepository {
     return await User.create(data)
   }
 
+  static async createManyUsers(data: User[]): Promise<User[]> {
+    return await User.insertMany(data)
+  }
+
   static async getUsersCount(): Promise<number> {
     return await User.countDocuments({});
   }
@@ -30,4 +34,5 @@ export class UserRepository {
   static async updateUser(id: string, data: User): Promise<User | null> {
     return await User.findByIdAndUpdate(id, data, { new: true })
   }
+
 }
