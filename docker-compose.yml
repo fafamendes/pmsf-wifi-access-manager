@@ -5,7 +5,7 @@ services:
     build: .
     container_name: pmsf-wam-app
     ports:
-      - 3000:3000
+      - 3333:3000
     networks:
       - app-network
     depends_on:

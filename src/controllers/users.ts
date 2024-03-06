@@ -67,10 +67,18 @@ export class UsersController extends BaseController {
     }
   }
 
-  @Get(':id')
+  @Get('me')
   @Middleware(authMiddleware)
   public async getUser(req: Request, res: Response): Promise<void> {
-
+    const userId = req.context?.userId;
+    try {
+      const user = await UserRepository.getById(userId!);
+      res.send({ success: true, user }).end();
+    }
+    catch (error: Error | any) {
+      res.status(401).send({ message: 'Unauthorized', error }).end();
+      console.log(error)
+    }
   }
 
   @Post('users_count')

@@ -4,6 +4,7 @@ import { Application } from 'express';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import * as http from 'http';
+import cors from 'cors';
 
 import { UsersController } from './controllers/users';
 import { UploadXlsxController } from './controllers/uploadXlsx';
@@ -40,6 +41,9 @@ export class SetupServer extends Server {
     logger.info('Configurando servidor');
     this.app.use(bodyParser.json())
     this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(cors({
+      origin: '*'
+    }));
     this.app.use(morgan('dev'));
   }
 
