@@ -17,12 +17,13 @@ export async function getUsersExcel(filePath: string): Promise<ExcelUser[]> {
 
     const worksheet = workbook.getWorksheet(1);
 
-    worksheet?.eachRow({ includeEmpty: false }, async (row, rowNumber) => {
-      const matricula = row.getCell(1).value;
-      const nome = row.getCell(2).value;
-      const senha = createPassword(nome as string);
-      users.push({ name: nome as string, username: matricula as string, password: await AuthService.hashPassword(senha), role: 'USER', status: true });
-      console.log(`User: ${matricula} - Senha: ${senha}`);
+    worksheet?.eachRow({ includeEmpty: false }, async function (row, rowNumber) {
+      console.log(((rowNumber + 1) / worksheet.rowCount * 100).toFixed(2), '% concluído');
+      const username = row.getCell(1).value as string;
+      const name = row.getCell(2).value as string;
+      let password = createPassword(name);
+      
+      users.push({ name, username, password, role: 'USER', status: true });
     });
 
   } catch (error) {

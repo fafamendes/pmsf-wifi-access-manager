@@ -11,6 +11,10 @@ export class AuthService {
     return await bcrypt.hash(password, salt);
   }
 
+  public static hashPasswordSync(password: string, salt = 10): string {
+    return bcrypt.hashSync(password, salt);
+  }
+
   public static async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(password, hashedPassword);
   }

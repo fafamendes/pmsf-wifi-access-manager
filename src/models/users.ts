@@ -51,10 +51,21 @@ userSchema.pre('save', async function () {
   try {
     const hashedPassword = await AuthService.hashPassword(this.password);
     this.password = hashedPassword;
+
   } catch (error: any) {
     console.error('Error hashing password', error);
   }
 });
 
+userSchema.pre('insertMany', async function (err, users) {
+  console.log('Entrou')
+  try {
+    users.map(async (user: User) => {
+      user.password = AuthService.hashPasswordSync(user.password);
+    })
+  } catch (error: any) {
+    console.error('Error hashing password', error);
+  }
+});
 
 export const User: Model<UserModel> = mongoose.model<UserModel>('User', userSchema);

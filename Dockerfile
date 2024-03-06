@@ -11,6 +11,8 @@ COPY . .
 
 RUN npm run build
 
+RUN mkdir -p /app/dist/temp/
+
 EXPOSE 3000
 
 CMD ["npm", "start"]

@@ -16,9 +16,7 @@ export class UsersController extends BaseController {
     const userId = req.context?.userId;
     const loggedUser = await UserRepository.getById(userId!);
     if (loggedUser?.role !== 'ADMIN') {
-      console.log('Não é admin')
       res.status(401).send({ message: 'Unauthorized' });
-
     }
 
     const user = await UserRepository.getUserByUsername(req.body.username);
@@ -56,6 +54,18 @@ export class UsersController extends BaseController {
     }
   }
 
+  @Post('users_details')
+  @Middleware(authMiddleware)
+  public async getUserDetails(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+    if (loggedUser?.role !== 'ADMIN') {
+      res.status(401).send({ message: 'Unauthorized' }).end();
+    } else {
+      const users = await UserRepository.getAllUsers();
+      res.send({ success: true, users }).end();
+    }
+  }
 
   @Get(':id')
   @Middleware(authMiddleware)
@@ -67,17 +77,17 @@ export class UsersController extends BaseController {
   @Middleware(authMiddleware)
   public async getNumberOfUsers(req: Request, res: Response): Promise<void> {
     const userId = req.context?.userId;
-    console.log(userId)
     const loggedUser = await UserRepository.getById(userId!);
     try {
       if (!userId) {
-        res.status(401).send({ message: 'Token is not provided' });
+        res.status(401).send({ message: 'Token is not provided' }).end();
       }
       if (loggedUser?.role !== 'ADMIN') {
-        res.status(401).send({ message: 'Unauthorized' });
+        res.status(401).send({ message: 'Unauthorized' }).end();
       } else {
+
         const usersCount = await UserRepository.getUsersCount();
-        res.status(200).send({ usersCount });
+        res.send({ success: true, usersCount }).end();
       }
     } catch (error: Error | any) {
       console.log(error)
@@ -125,7 +135,6 @@ export class UsersController extends BaseController {
       if (!user) {
         res.status(404).send(false)
       } else {
-        console.log(req.body.password, user.password)
         if (await AuthService.comparePassword(req.body.password, user.password)) {
           if (user.status)
             res.send(true);

@@ -10,8 +10,9 @@ import { authMiddleware } from "@src/middlewares/auth";
 @Controller('upload-xlsx')
 export class UploadXlsxController extends BaseController {
   @Post('')
-  @Middleware([authMiddleware, upload.single('xlsx')])
-  async uploadXlsx(req: Request, res: Response): Promise<void> {
+  @Middleware(authMiddleware)
+  @Middleware(upload.single('xlsx'))  
+  public async uploadXlsx(req: Request, res: Response): Promise<void> {
     const userId = req.context?.userId;
     const loggedUser = await UserRepository.getById(userId!);
     if (loggedUser?.role !== 'ADMIN') {
@@ -19,9 +20,10 @@ export class UploadXlsxController extends BaseController {
     } else {
       try {
         const users = await getUsersExcel(req.file?.path!);
-        await UserRepository.createManyUsers(users);
+        
+        const createdUsers = await UserRepository.createManyUsers(users);
 
-        res.send({ success: true }).end();
+        res.send({ success: true, users: createdUsers }).end();
       } catch (error: Error | any) {
         console.log(error)
       }
