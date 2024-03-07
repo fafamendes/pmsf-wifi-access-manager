@@ -31,6 +31,18 @@ export class UserRepository {
     return await User.find({});
   }
 
+  static async getLikeUsername(username: string, limit: number, removeUserId?: string): Promise<User[]> {
+    username = username.replace(/[^\w\s]/gi, '');
+    return await User.find({ username: { $regex: new RegExp('^' + username, 'i') }, _id: { $ne: removeUserId } })
+      .limit(limit);
+  }
+
+  static async getLikeName(name: string, limit: number, removeUserId?: string): Promise<User[]> {
+    name = name.replace(/[^\w\s]/gi, '');
+    return await User.find({ name: { $regex: new RegExp('^' + name, 'i') }, _id: { $ne: removeUserId } })
+      .limit(limit);
+  }
+
   static async deleteUser(id: string): Promise<User | null> {
     return await User.findByIdAndDelete(id)
   }

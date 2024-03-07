@@ -81,7 +81,7 @@ export class UsersController extends BaseController {
     }
   }
 
-  @Post('users_count')
+  @Get('users_count')
   @Middleware(authMiddleware)
   public async getNumberOfUsers(req: Request, res: Response): Promise<void> {
     const userId = req.context?.userId;
@@ -99,6 +99,41 @@ export class UsersController extends BaseController {
       }
     } catch (error: Error | any) {
       console.log(error)
+    }
+  }
+
+  @Get('like_username/:username/:limit')
+  @Middleware(authMiddleware)
+  public async getLikeUsername(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+    if (loggedUser?.role !== 'ADMIN') {
+      res.status(401).send({ error: true, message: 'Unauthorized' });
+    } else {
+      try {
+        const users = await UserRepository.getLikeUsername(req.params.username, parseInt(req.params.limit), userId!);
+        res.send({ success: true, users }).end();
+      } catch (error: Error | any) {
+        console.log(error)
+      }
+    }
+  }
+
+
+  @Get('like_name/:name/:limit')
+  @Middleware(authMiddleware)
+  public async getLikeName(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+    if (loggedUser?.role !== 'ADMIN') {
+      res.status(401).send({ error: true, message: 'Unauthorized' });
+    } else {
+      try {
+        const users = await UserRepository.getLikeName(req.params.name, parseInt(req.params.limit), userId!);
+        res.send({ success: true, users }).end();
+      } catch (error: Error | any) {
+        console.log(error)
+      }
     }
   }
 
