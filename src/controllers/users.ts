@@ -137,6 +137,31 @@ export class UsersController extends BaseController {
     }
   }
 
+  @Get('search/:search_string/:limit')
+  @Middleware(authMiddleware)
+  public async searchUsers(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+    if (loggedUser?.role !== 'ADMIN') {
+      res.status(401).send({ error: true, message: 'Unauthorized' });
+    }
+    else {
+      try {
+        
+        const users = [
+          ...await UserRepository.getLikeName(req.params.search_string, parseInt(req.params.limit), userId!),
+          ...await UserRepository.getLikeUsername(req.params.search_string, parseInt(req.params.limit), userId!)
+        ];
+    
+        res.send({ success: true, users }).end();
+      } catch (error: Error | any) {
+        console.log(error)
+        res.status(500).send({ error: true, message: 'Internal server error' });
+      }
+    }
+  }
+
+
   @Delete(':id')
   @Middleware(authMiddleware)
   public async deleteUser(req: Request, res: Response): Promise<void> {
