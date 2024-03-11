@@ -147,12 +147,12 @@ export class UsersController extends BaseController {
     }
     else {
       try {
-        
+
         const users = [
           ...await UserRepository.getLikeName(req.params.search_string, parseInt(req.params.limit), userId!),
           ...await UserRepository.getLikeUsername(req.params.search_string, parseInt(req.params.limit), userId!)
         ];
-    
+
         res.send({ success: true, users }).end();
       } catch (error: Error | any) {
         console.log(error)
@@ -182,18 +182,19 @@ export class UsersController extends BaseController {
   @Middleware(authMiddleware)
   public async updateUser(req: Request, res: Response): Promise<void> {
     const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
 
-    const user = await UserRepository.getById(req.params.id);
-
-    if (!user) {
+    if (!loggedUser) {
       res.status(404).send({ message: 'User not found' });
     }
 
-    if (user?.role === 'ADMIN' || userId === user?.id) {
+    if (loggedUser?.role === 'ADMIN' || userId === loggedUser?.id) {
       await UserRepository.updateUser(req.params.id, req.body);
       res.send({ success: true });
+    } else {
+      res.status(403).send({ message: 'Forbidden' });
     }
-    res.status(401).send({ message: 'Unauthorized' });
+
   }
 
   @Post('verify')
