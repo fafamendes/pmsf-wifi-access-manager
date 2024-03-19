@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Middleware, Post, Put } from '@overnightjs/core';
+import { Controller, Delete, Get, Middleware, Patch, Post, Put } from '@overnightjs/core';
 import { Request, Response } from 'express';
 
 import { UserRepository } from '@repositories/user.repository'
@@ -21,7 +21,7 @@ export class UsersController extends BaseController {
 
     const user = await UserRepository.getUserByUsername(req.body.username);
     if (user) {
-      res.status(200).send({ message: 'User already exists' })
+      res.status(409).send({ message: 'User already exists' })
       res.end();
     };
 
@@ -192,10 +192,25 @@ export class UsersController extends BaseController {
       await UserRepository.updateUser(req.params.id, req.body);
       res.send({ success: true });
     } else {
-      res.status(403).send({ message: 'Forbidden' });
+      res.status(403).send({ message: 'Forbidden access' });
     }
 
   }
+
+  @Patch('update_password/:id')
+  @Middleware(authMiddleware)
+  public async updateUserPassword(req: Request, res: Response): Promise<void> {
+    const userId = req.context?.userId;
+    const loggedUser = await UserRepository.getById(userId!);
+
+    if (loggedUser?.role === 'ADMIN' || userId === loggedUser?.id) {
+      await UserRepository.updateUserPassword(req.params.id, req.body.password);
+      res.send({ success: true });
+    } else {
+      res.status(403).send({ message: 'Forbidden access' });
+    }
+  }
+
 
   @Post('verify')
   public async verifyUser(req: Request, res: Response): Promise<void> {

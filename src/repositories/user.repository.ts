@@ -1,6 +1,7 @@
 
 import mongoose from 'mongoose'
 import { User } from '../models/users'
+import { AuthService } from '@src/services/auth';
 
 export class UserRepository {
   static async createUser(data: User): Promise<User> {
@@ -49,6 +50,11 @@ export class UserRepository {
 
   static async updateUser(id: string, data: User): Promise<User | null> {
     return await User.findByIdAndUpdate(id, data, { new: true })
+  }
+
+  static async updateUserPassword(id: string, password: string) {
+    const hashedPassword = await AuthService.hashPassword(password);
+    return await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true })
   }
 
 }

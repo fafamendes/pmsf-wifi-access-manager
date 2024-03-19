@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
       transform(_, ret) {
         ret.id = ret._id;
         delete ret._id;
-        delete ret.password;
+
         delete ret.__v;
       }
     }
@@ -58,7 +58,7 @@ userSchema.pre('save', async function () {
 });
 
 userSchema.pre('insertMany', async function (err, users) {
-  console.log('Entrou')
+
   try {
     users.map(async (user: User) => {
       user.password = AuthService.hashPasswordSync(user.password);
